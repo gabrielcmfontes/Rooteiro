@@ -1,58 +1,32 @@
-Rooteiro - Sistema de Roteiro Turístico
-Descrição
-Este projeto implementa um sistema de decisão para o planejamento de um rooteiro turístico inteligente (trocadilho com "root" de árvore e "roteiro"). O sistema modela uma rede de cidades em uma árvore binária de busca, onde cada nó representa uma cidade. Para cada cidade, um conjunto de eventos (atrações) é gerado automaticamente, contendo um nome e uma avaliação (valor entre 0.0 e 10.0).
-Estrutura do Projeto
-O sistema é baseado em uma estrutura de árvore binária de busca com as seguintes características:
+# 🌿 Rooteiro - Sistema de Roteiro Turístico Inteligente
 
-Cada nó da árvore representa uma cidade com um nome gerado aleatoriamente
-Cada cidade contém uma lista de eventos turísticos com avaliações
-A árvore suporta as operações padrão: inserção, busca, caminhamentos, etc.
+**Rooteiro** é um sistema para planejar roteiros turísticos inteligentes, usando uma árvore binária de busca para organizar cidades e seus eventos.
 
-Funcionalidades Implementadas
-Gerenciamento de Cidades
+---
 
-Geração aleatória de cidades com nomes variados
-Inserção de cidades na árvore binária de busca
-Busca de cidades por chave
+## 📚 Descrição
 
-Gerenciamento de Eventos
+O sistema modela uma rede de cidades, onde:
+- **Cada cidade** é representada por um nó na árvore.
+- **Eventos turísticos** são gerados automaticamente para cada cidade, com nome e avaliação (0.0 a 10.0).
 
-Geração aleatória de eventos turísticos para cada cidade
-Cada evento possui um nome e uma avaliação entre 0.0 e 10.0
+---
 
-Operações da Árvore
+## 🌳 Funcionalidades
 
-Caminhamento central (in-ordem)
-Caminhamento pré-ordem
-Caminhamento pós-ordem
-Busca de nós
-Identificação de mínimo e máximo
-Busca de sucessor e predecessor
+- **Geração aleatória** de cidades e eventos
+- **Operações da árvore**: inserção, busca, caminhamentos (In-Order, Pré-Order, Pós-Order), sucessor, predecessor, mínimo e máximo.
 
-Como Compilar e Executar
-Para compilar o programa, utilize o compilador gcc:
-bashCopygcc main.c -o rooteiro
-Para executar:
-bashCopy./rooteiro
-Exemplo de Saída
-Ao executar o programa, você verá:
+---
 
-Lista das cidades geradas em ordem crescente de chave (caminhamento central)
-Lista das cidades em percurso pré-ordem
-Lista das cidades em percurso pós-ordem
-Detalhes da cidade com menor chave e seus eventos
-Detalhes da cidade com maior chave e seus eventos
+## 🖥️ Como Executar
 
-Próximos Passos
+1. **Compilação**:
+   ```bash
+   gcc main.c -o rooteiro
 
-Implementar algoritmos de ordenação (Bubble Sort, Selection Sort, Insertion Sort, Shellsort, Quicksort, Mergesort e Heapsort) para ordenar os eventos de cada cidade
-Desenvolver funcionalidade para escolha de roteiros entre cidades
-Adicionar interface para interação do usuário
+## 👨‍💻 Autores
 
-Autores
-Gabriel Fontes
-João Pedro Lobo
-Gabriel Calili Nunes
-
-Licença
-Este projeto foi desenvolvido como parte de um trabalho acadêmico.
+- **Gabriel Fontes** - [GitHub](https://github.com/gabrielcmfontes)
+- **João Pedro Lobo** - [GitHub](https://github.com/JoaoLoboIT)
+- **Gabriel Calili Nunes** - [GitHub](https://github.com/gabriel-calili)
