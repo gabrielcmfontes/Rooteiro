@@ -30,3 +30,9 @@ O sistema modela uma rede de cidades, onde:
 - **Gabriel Fontes** - [GitHub](https://github.com/gabrielcmfontes)
 - **João Pedro Lobo** - [GitHub](https://github.com/JoaoLoboIT)
 - **Gabriel Calili Nunes** - [GitHub](https://github.com/gabriel-calili)
+
+## 📄 Licença
+
+Este projeto foi desenvolvido como parte de um **trabalho acadêmico**.  
+Sinta-se à vontade para estudar, aprender e se inspirar!
+
