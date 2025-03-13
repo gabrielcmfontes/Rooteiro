@@ -56,31 +56,51 @@ TCelula* CriaCelula(TItem item) {
     return celula;
 }
 
+int CidadeExiste(TCelula *raiz, const char *nomeCidade) {
+    if (raiz == NULL) {
+        return 0;
+    }
+
+    if (strcmp(raiz->item.cidade.nome, nomeCidade) == 0) {
+        return 1;
+    }
+
+    // Busca recursiva nos dois lados
+    return CidadeExiste(raiz->esq, nomeCidade) || CidadeExiste(raiz->dir, nomeCidade);
+}
+
+
 // Funcao para gerar um nome de cidade aleatorio
-void GeraNomeCidade(char *nome) {
+void GeraNomeCidade(char *nome, TArvore *arvore) {
     static char *prefixos[] = {"Nova", "Sao", "Santa", "Santo", "Porto", "Vila", "Belo", "Bela"};
     static char *sufixos[] = {"Horizonte", "Alegre", "Cruz", "Mar", "Terra", "Vista", "Campo", "Jardim", "Praia", "Montanha"};
-    static char *meio[] = {"do", "da", "dos", "das", "de"};
+    static char *meio[] = {"do", "da", "de"};
 
-    int tipo = rand() % 3;
+    int nomeUnico = 0;
 
-    if (tipo == 0) {
-        // Prefixo + Sufixo
-        int prefixoIdx = rand() % 8;
-        int sufixoIdx = rand() % 10;
-        sprintf(nome, "%s %s", prefixos[prefixoIdx], sufixos[sufixoIdx]);
-    } else if (tipo == 1) {
-        // Apenas um nome
-        static char *nomes[] = {"Campinas", "Ouro Preto", "Diamantina", "Petropolis", "Gramado", "Curitiba", "Florianopolis", "Buzios", "Paraty", "Olinda"};
-        int nomeIdx = rand() % 10;
-        strcpy(nome, nomes[nomeIdx]);
-    } else {
-        // Nome composto
-        static char *primeiros[] = {"Ribeirao", "Monte", "Vale", "Serra", "Campo", "Morro", "Rio", "Lagoa", "Recanto"};
-        int primeiroIdx = rand() % 9;
-        int meioIdx = rand() % 5;
-        int sufixoIdx = rand() % 10;
-        sprintf(nome, "%s %s %s", primeiros[primeiroIdx], meio[meioIdx], sufixos[sufixoIdx]);
+    while ((!nomeUnico)) {
+        int tipo = rand() % 3;
+
+        if (tipo == 0) {
+            // Prefixo + Sufixo
+            int prefixoIdx = rand() % 8;
+            int sufixoIdx = rand() % 10;
+            sprintf(nome, "%s %s", prefixos[prefixoIdx], sufixos[sufixoIdx]);
+        } else if (tipo == 1) {
+            // Apenas um nome
+            static char *nomes[] = {"Campinas", "Ouro Preto", "Diamantina", "Petropolis", "Gramado", "Curitiba", "Florianopolis", "Buzios", "Paraty", "Olinda"};
+            int nomeIdx = rand() % 10;
+            strcpy(nome, nomes[nomeIdx]);
+        } else {
+            // Nome composto
+            static char *primeiros[] = {"Ribeirao", "Monte", "Vale", "Serra", "Campo", "Morro", "Rio", "Lagoa", "Recanto"};
+            int primeiroIdx = rand() % 9;
+            int meioIdx = rand() % 3;
+            int sufixoIdx = rand() % 10;
+            sprintf(nome, "%s %s %s", primeiros[primeiroIdx], meio[meioIdx], sufixos[sufixoIdx]);
+        }
+
+        nomeUnico = !CidadeExiste(arvore->raiz, nome);
     }
 }
 
@@ -91,6 +111,7 @@ void GeraNomeEvento(char *nome) {
 
     int tipoIdx = rand() % 8;
     int temaIdx = rand() % 10;
+
 
     sprintf(nome, "%s %s", tipos[tipoIdx], temas[temaIdx]);
 }
@@ -112,9 +133,9 @@ void GeraEventos(TCidade *cidade, int numEventos) {
 }
 
 // Funcao para gerar uma cidade aleatoria
-TCidade GeraCidadeAleatoria() {
+TCidade GeraCidadeAleatoria(TArvore *arvore) {
     TCidade cidade;
-    GeraNomeCidade(cidade.nome);
+    GeraNomeCidade(cidade.nome, arvore);
 
     int numEventos = 5 + (rand() % 6);
     GeraEventos(&cidade, numEventos);
@@ -157,13 +178,12 @@ void GeraInsereCidades(TArvore *arvore, int numCidades) {
     for (int i = 0; i < numCidades; i++) {
         TItem item;
         item.chave = rand() % 1000; // Chave aleatoria entre 0 e 999
-        item.cidade = GeraCidadeAleatoria();
+        item.cidade = GeraCidadeAleatoria(arvore);
 
         InsereNo(arvore, item);
     }
 }
 
-// Nova funcao para gerar cidades e eventos personalizados usando o algoritmo original
 void GeraCidadesEventosPersonalizados(TArvore *arvore, int numCidades) {
     // Estruturas para eventos personalizados
     char *eventosNomes[] = {
@@ -175,18 +195,12 @@ void GeraCidadesEventosPersonalizados(TArvore *arvore, int numCidades) {
         "Festival Cultural", "Tour Noturno", "Passeio Ecologico"
     };
 
-    float avaliacoes[] = {
-        9.8, 8.5, 9.0, 9.5, 7.9,
-        9.2, 8.0, 8.3, 9.7, 8.6,
-        9.3, 8.9, 9.6, 8.2, 9.4
-    };
-
     for (int i = 0; i < numCidades; i++) {
         TItem item;
         item.chave = 100 + i * 100; // Chaves 100, 200, 300, etc.
 
         // Usar o algoritmo original para gerar o nome da cidade
-        GeraNomeCidade(item.cidade.nome);
+        GeraNomeCidade(item.cidade.nome, arvore);
 
         // Configurar eventos personalizados
         int numEventos = 5 + (rand() % 6); // Entre 5 e 10 eventos
@@ -216,7 +230,8 @@ void GeraCidadesEventosPersonalizados(TArvore *arvore, int numCidades) {
         for (int j = 0; j < numEventos; j++) {
             int idx = eventosDisponiveis[j];
             strcpy(item.cidade.eventos[j].nome, eventosNomes[idx]);
-            item.cidade.eventos[j].avaliacao = avaliacoes[idx];
+            // Gera valores aleatórios entre 0.0 e 10.0 com incrementos de 0.1
+            item.cidade.eventos[j].avaliacao = (rand() % 101) / 10.0;
         }
 
         // Inserir na árvore
@@ -383,46 +398,34 @@ int main() {
     // Inicializa o gerador de numeros aleatorios
     srand(time(NULL));
 
-    // Cria e inicializa a arvore
     TArvore arvore;
     InicializaArvore(&arvore);
 
-    // Gera e insere 5 cidades com o algoritmo original mas eventos personalizados
-    printf("Gerando e inserindo cidades com o algoritmo original e eventos personalizados...\n");
-    GeraCidadesEventosPersonalizados(&arvore, 5);
+    int numCidades = 10;
+    printf("Gerando %d cidades com verificação de nomes únicos...\n", numCidades);
 
-    // Gera e insere 5 cidades totalmente aleatorias na arvore
-    int numCidadesAleatorias = 5;
-    printf("Gerando e inserindo %d cidades aleatorias na arvore...\n", numCidadesAleatorias);
-    GeraInsereCidades(&arvore, numCidadesAleatorias);
+    GeraInsereCidades(&arvore, numCidades);
 
-    // Exibe a arvore em diferentes percursos
-    printf("\n === CAMINHAMENTO CENTRAL ===\n");
+    printf("\n=== LISTA DE CIDADES GERADAS (em ordem pela chave) ===\n");
     CaminhamentoCentral(arvore.raiz);
 
-    printf("\n === CAMINHAMENTO PRE-ORDEM ===\n");
-    CaminhamentoPreOrdem(arvore.raiz);
+    printf("\n=== VERIFICACAO DE NOMES ===\n");
 
-    printf("\n === CAMINHAMENTO POS-ORDEM ===\n");
-    CaminhamentoPosOrdem(arvore.raiz);
-
-    // Busca a cidade com a menor chave
-    TCelula *minimo = Minimo(arvore.raiz);
-    if (minimo != NULL) {
-        printf("\n === CIDADE COM MENOR CHAVE ===\n");
-        printf("Chave: %d, Cidade: %s\n", minimo->item.chave, minimo->item.cidade.nome);
-        MostraEventos(minimo->item.cidade);
+    // Função simples que varre a árvore e mostra todas as cidades para verificação
+    void VerificaNomes(TCelula *no) {
+        if (no != NULL) {
+            VerificaNomes(no->esq);
+            printf("Cidade: %-25s | Chave: %d\n", no->item.cidade.nome, no->item.chave);
+            VerificaNomes(no->dir);
+        }
     }
 
-    // Busca a cidade com a maior chave
-    TCelula *maximo = Maximo(arvore.raiz);
-    if (maximo != NULL) {
-        printf("\n === CIDADE COM MAIOR CHAVE ===\n");
-        printf("Chave: %d, Cidade: %s\n", maximo->item.chave, maximo->item.cidade.nome);
-        MostraEventos(maximo->item.cidade);
-    }
+    VerificaNomes(arvore.raiz);
 
+    // Libera a memória no final
     LiberaArvore(&arvore);
+
+    printf("\nMemória liberada com sucesso!\n");
 
     return 0;
 }
