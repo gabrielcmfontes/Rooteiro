@@ -277,16 +277,20 @@ void CaminhamentoPosOrdem(TCelula *x) {
     }
 }
 
-// Funcao para buscar um no com uma determinada chave na arvore
-TCelula* Busca(TCelula *x, int chave) {
-    if (x == NULL || x->item.chave == chave) {
+TCelula Busca(TCelulax, char *nome)
+{
+    if (x == NULL || strcmp(x->item.cidade.nome, nome) == 0)
+    {
         return x;
     }
 
-    if (chave < x->item.chave) {
-        return Busca(x->esq, chave);
-    } else {
-        return Busca(x->dir, chave);
+    if (strcmp(nome, x->item.cidade.nome) < 0)
+    {
+        return Busca(x->esq, nome);
+    }
+    else
+    {
+        return Busca(x->dir, nome);
     }
 }
 
@@ -401,7 +405,7 @@ int main() {
     TArvore arvore;
     InicializaArvore(&arvore);
 
-    int numCidades = 10;
+    int numCidades = 5;
     printf("Gerando %d cidades com verificação de nomes únicos...\n", numCidades);
 
     GeraInsereCidades(&arvore, numCidades);
@@ -412,7 +416,7 @@ int main() {
     printf("\n=== VERIFICACAO DE NOMES ===\n");
 
     // Função simples que varre a árvore e mostra todas as cidades para verificação
-    void VerificaNomes(TCelula *no) {
+    void VerificaNomes(TCelula *no){
         if (no != NULL) {
             VerificaNomes(no->esq);
             printf("Cidade: %-25s | Chave: %d\n", no->item.cidade.nome, no->item.chave);
