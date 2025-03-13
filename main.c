@@ -4,30 +4,26 @@
 #include <time.h>
 
 // Definicao da estrutura para os eventos turisticos
-typedef struct evento
-{
+typedef struct evento {
     char nome[50];
     float avaliacao;
 } TEvento;
 
 // Definicao da estrutura para as cidades
-typedef struct cidade
-{
+typedef struct cidade {
     char nome[50];
     TEvento *eventos;
     int numEventos;
 } TCidade;
 
 // Definicao da estrutura para os itens da arvore
-typedef struct item
-{
+typedef struct item {
     int chave;
     TCidade cidade;
 } TItem;
 
 // Definicao da estrutura para as celulas da arvore
-typedef struct celula
-{
+typedef struct celula {
     TItem item;
     struct celula *pai;
     struct celula *esq;
@@ -35,23 +31,19 @@ typedef struct celula
 } TCelula;
 
 // Definicao da estrutura para a arvore
-typedef struct arvore
-{
+typedef struct arvore {
     TCelula *raiz;
 } TArvore;
 
 // Funcao para inicializar a arvore
-void InicializaArvore(TArvore *arvore)
-{
+void InicializaArvore(TArvore *arvore) {
     arvore->raiz = NULL;
 }
 
 // Funcao para criar uma nova celula
-TCelula *CriaCelula(TItem item)
-{
-    TCelula *celula = (TCelula *)malloc(sizeof(TCelula));
-    if (celula == NULL)
-    {
+TCelula* CriaCelula(TItem item) {
+    TCelula *celula = (TCelula*) malloc(sizeof(TCelula));
+    if (celula == NULL) {
         printf("Erro: Falha na alocacao de memoria\n");
         exit(1);
     }
@@ -65,30 +57,24 @@ TCelula *CriaCelula(TItem item)
 }
 
 // Funcao para gerar um nome de cidade aleatorio
-void GeraNomeCidade(char *nome)
-{
+void GeraNomeCidade(char *nome) {
     static char *prefixos[] = {"Nova", "Sao", "Santa", "Santo", "Porto", "Vila", "Belo", "Bela"};
     static char *sufixos[] = {"Horizonte", "Alegre", "Cruz", "Mar", "Terra", "Vista", "Campo", "Jardim", "Praia", "Montanha"};
     static char *meio[] = {"do", "da", "dos", "das", "de"};
 
     int tipo = rand() % 3;
 
-    if (tipo == 0)
-    {
+    if (tipo == 0) {
         // Prefixo + Sufixo
         int prefixoIdx = rand() % 8;
         int sufixoIdx = rand() % 10;
         sprintf(nome, "%s %s", prefixos[prefixoIdx], sufixos[sufixoIdx]);
-    }
-    else if (tipo == 1)
-    {
+    } else if (tipo == 1) {
         // Apenas um nome
         static char *nomes[] = {"Campinas", "Ouro Preto", "Diamantina", "Petropolis", "Gramado", "Curitiba", "Florianopolis", "Buzios", "Paraty", "Olinda"};
         int nomeIdx = rand() % 10;
         strcpy(nome, nomes[nomeIdx]);
-    }
-    else
-    {
+    } else {
         // Nome composto
         static char *primeiros[] = {"Ribeirao", "Monte", "Vale", "Serra", "Campo", "Morro", "Rio", "Lagoa", "Recanto"};
         int primeiroIdx = rand() % 9;
@@ -99,8 +85,7 @@ void GeraNomeCidade(char *nome)
 }
 
 // Funcao para gerar um nome de evento aleatorio
-void GeraNomeEvento(char *nome)
-{
+void GeraNomeEvento(char *nome) {
     static char *tipos[] = {"Festival de", "Feira de", "Mostra de", "Tour por", "Visita ao", "Passeio de", "Espetaculo de", "Exposicao de"};
     static char *temas[] = {"Arte", "Musica", "Gastronomia", "Historia", "Cultura", "Natureza", "Artesanato", "Cinema", "Teatro", "Danca"};
 
@@ -111,27 +96,23 @@ void GeraNomeEvento(char *nome)
 }
 
 // Funcao para gerar eventos aleatorios para uma cidade
-void GeraEventos(TCidade *cidade, int numEventos)
-{
+void GeraEventos(TCidade *cidade, int numEventos) {
     cidade->numEventos = numEventos;
-    cidade->eventos = (TEvento *)malloc(numEventos * sizeof(TEvento));
+    cidade->eventos = (TEvento*) malloc(numEventos * sizeof(TEvento));
 
-    if (cidade->eventos == NULL)
-    {
+    if (cidade->eventos == NULL) {
         printf("Erro: Falha na alocacao de memoria para eventos\n");
         exit(1);
     }
 
-    for (int i = 0; i < numEventos; i++)
-    {
+    for (int i = 0; i < numEventos; i++) {
         GeraNomeEvento(cidade->eventos[i].nome);
         cidade->eventos[i].avaliacao = (rand() % 100) / 10.0; // Gera avaliacoes entre 0.0 e 10.0
     }
 }
 
 // Funcao para gerar uma cidade aleatoria
-TCidade GeraCidadeAleatoria()
-{
+TCidade GeraCidadeAleatoria() {
     TCidade cidade;
     GeraNomeCidade(cidade.nome);
 
@@ -142,50 +123,38 @@ TCidade GeraCidadeAleatoria()
 }
 
 // Funcao para inserir um no na arvore, conforme a estrutura da ABB do documento
-void InsereNo(TArvore *arvore, TItem item)
-{
+void InsereNo(TArvore *arvore, TItem item) {
     TCelula *z = CriaCelula(item);
     TCelula *y = NULL;
     TCelula *x = arvore->raiz;
 
     // Encontra a posicao para inserir
-    while (x != NULL)
-    {
+    while (x != NULL) {
         y = x;
-        if (z->item.chave < x->item.chave)
-        {
+        if (z->item.chave < x->item.chave) {
             x = x->esq;
-        }
-        else
-        {
+        } else {
             x = x->dir;
         }
     }
 
     z->pai = y;
 
-    if (y == NULL)
-    {
+    if (y == NULL) {
         // Arvore vazia, z se torna a raiz
         arvore->raiz = z;
-    }
-    else if (z->item.chave < y->item.chave)
-    {
+    } else if (z->item.chave < y->item.chave) {
         // z vai para o lado esquerdo de y
         y->esq = z;
-    }
-    else
-    {
+    } else {
         // z vai para o lado direito de y
         y->dir = z;
     }
 }
 
 // Funcao para gerar e inserir cidades aleatorias na arvore
-void GeraInsereCidades(TArvore *arvore, int numCidades)
-{
-    for (int i = 0; i < numCidades; i++)
-    {
+void GeraInsereCidades(TArvore *arvore, int numCidades) {
+    for (int i = 0; i < numCidades; i++) {
         TItem item;
         item.chave = rand() % 1000; // Chave aleatoria entre 0 e 999
         item.cidade = GeraCidadeAleatoria();
@@ -195,8 +164,7 @@ void GeraInsereCidades(TArvore *arvore, int numCidades)
 }
 
 // Nova funcao para gerar cidades e eventos personalizados usando o algoritmo original
-void GeraCidadesEventosPersonalizados(TArvore *arvore, int numCidades)
-{
+void GeraCidadesEventosPersonalizados(TArvore *arvore, int numCidades) {
     // Estruturas para eventos personalizados
     char *eventosNomes[] = {
         "Festival de Musica", "Feira de Arte", "Mostra de Cinema",
@@ -204,23 +172,16 @@ void GeraCidadesEventosPersonalizados(TArvore *arvore, int numCidades)
         "Passeio pela Praia", "Espetaculo de Teatro",
         "Exposicao de Artesanato", "Festival Gastronomico",
         "Tour Historico", "Passeio de Barco", "Visita a Mercados",
-        "Festival Cultural", "Tour Noturno", "Passeio Ecologico"};
+        "Festival Cultural", "Tour Noturno", "Passeio Ecologico"
+    };
 
     float avaliacoes[] = {
-        0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,
-        1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9,
-        2.0, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9,
-        3.0, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9,
-        4.0, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9,
-        5.0, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8, 5.9,
-        6.0, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8, 6.9,
-        7.0, 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 7.8, 7.9,
-        8.0, 8.1, 8.2, 8.3, 8.4, 8.5, 8.6, 8.7, 8.8, 8.9,
-        9.0, 9.1, 9.2, 9.3, 9.4, 9.5, 9.6, 9.7, 9.8, 9.9,
-        10.0};
+        9.8, 8.5, 9.0, 9.5, 7.9,
+        9.2, 8.0, 8.3, 9.7, 8.6,
+        9.3, 8.9, 9.6, 8.2, 9.4
+    };
 
-    for (int i = 0; i < numCidades; i++)
-    {
+    for (int i = 0; i < numCidades; i++) {
         TItem item;
         item.chave = 100 + i * 100; // Chaves 100, 200, 300, etc.
 
@@ -230,24 +191,21 @@ void GeraCidadesEventosPersonalizados(TArvore *arvore, int numCidades)
         // Configurar eventos personalizados
         int numEventos = 5 + (rand() % 6); // Entre 5 e 10 eventos
         item.cidade.numEventos = numEventos;
-        item.cidade.eventos = (TEvento *)malloc(numEventos * sizeof(TEvento));
+        item.cidade.eventos = (TEvento*) malloc(numEventos * sizeof(TEvento));
 
-        if (item.cidade.eventos == NULL)
-        {
+        if (item.cidade.eventos == NULL) {
             printf("Erro: Falha na alocacao de memoria para eventos\n");
             exit(1);
         }
 
         // Criar eventos personalizados sem repetir
         int eventosDisponiveis[15];
-        for (int j = 0; j < 15; j++)
-        {
+        for (int j = 0; j < 15; j++) {
             eventosDisponiveis[j] = j;
         }
 
         // Embaralhar os eventos disponíveis (algoritmo Fisher-Yates)
-        for (int j = 14; j > 0; j--)
-        {
+        for (int j = 14; j > 0; j--) {
             int k = rand() % (j + 1);
             int temp = eventosDisponiveis[j];
             eventosDisponiveis[j] = eventosDisponiveis[k];
@@ -255,8 +213,7 @@ void GeraCidadesEventosPersonalizados(TArvore *arvore, int numCidades)
         }
 
         // Configurar eventos únicos para esta cidade
-        for (int j = 0; j < numEventos; j++)
-        {
+        for (int j = 0; j < numEventos; j++) {
             int idx = eventosDisponiveis[j];
             strcpy(item.cidade.eventos[j].nome, eventosNomes[idx]);
             item.cidade.eventos[j].avaliacao = avaliacoes[idx];
@@ -270,10 +227,8 @@ void GeraCidadesEventosPersonalizados(TArvore *arvore, int numCidades)
 }
 
 // Percurso in-ordem (caminhamento central)
-void CaminhamentoCentral(TCelula *x)
-{
-    if (x != NULL)
-    {
+void CaminhamentoCentral(TCelula *x) {
+    if (x != NULL) {
         CaminhamentoCentral(x->esq);
         printf("Chave: %d, Cidade: %s, Eventos: %d\n",
                x->item.chave,
@@ -284,10 +239,8 @@ void CaminhamentoCentral(TCelula *x)
 }
 
 // Percurso pre-ordem
-void CaminhamentoPreOrdem(TCelula *x)
-{
-    if (x != NULL)
-    {
+void CaminhamentoPreOrdem(TCelula *x) {
+    if (x != NULL) {
         printf("Chave: %d, Cidade: %s, Eventos: %d\n",
                x->item.chave,
                x->item.cidade.nome,
@@ -298,10 +251,8 @@ void CaminhamentoPreOrdem(TCelula *x)
 }
 
 // Percurso pos-ordem
-void CaminhamentoPosOrdem(TCelula *x)
-{
-    if (x != NULL)
-    {
+void CaminhamentoPosOrdem(TCelula *x) {
+    if (x != NULL) {
         CaminhamentoPosOrdem(x->esq);
         CaminhamentoPosOrdem(x->dir);
         printf("Chave: %d, Cidade: %s, Eventos: %d\n",
@@ -311,7 +262,7 @@ void CaminhamentoPosOrdem(TCelula *x)
     }
 }
 
-// Funcao para buscar um no pelo nome
+// Funcao para buscar um no com uma determinada chave na arvore
 
 TCelula *Busca(TCelula *x, char *nome)
 {
@@ -332,15 +283,12 @@ TCelula *Busca(TCelula *x, char *nome)
 
 
 // Funcao para encontrar o no com a chave minima na arvore
-TCelula *Minimo(TCelula *x)
-{
-    if (x == NULL)
-    {
+TCelula* Minimo(TCelula *x) {
+    if (x == NULL) {
         return NULL;
     }
 
-    while (x->esq != NULL)
-    {
+    while (x->esq != NULL) {
         x = x->esq;
     }
 
@@ -348,15 +296,12 @@ TCelula *Minimo(TCelula *x)
 }
 
 // Funcao para encontrar o no com a chave maxima na arvore
-TCelula *Maximo(TCelula *x)
-{
-    if (x == NULL)
-    {
+TCelula* Maximo(TCelula *x) {
+    if (x == NULL) {
         return NULL;
     }
 
-    while (x->dir != NULL)
-    {
+    while (x->dir != NULL) {
         x = x->dir;
     }
 
@@ -364,23 +309,19 @@ TCelula *Maximo(TCelula *x)
 }
 
 // Funcao para encontrar o sucessor de um no x
-TCelula *Sucessor(TCelula *x)
-{
-    if (x == NULL)
-    {
+TCelula* Sucessor(TCelula *x) {
+    if (x == NULL) {
         return NULL;
     }
 
     // Se x tem um filho a direita, o sucessor e o minimo da subarvore direita
-    if (x->dir != NULL)
-    {
+    if (x->dir != NULL) {
         return Minimo(x->dir);
     }
 
     // Senao, e o ancestral mais baixo cujo filho esquerdo tambem e ancestral de x
     TCelula *y = x->pai;
-    while (y != NULL && x == y->dir)
-    {
+    while (y != NULL && x == y->dir) {
         x = y;
         y = y->pai;
     }
@@ -389,23 +330,19 @@ TCelula *Sucessor(TCelula *x)
 }
 
 // Funcao para encontrar o predecessor de um no x
-TCelula *Predecessor(TCelula *x)
-{
-    if (x == NULL)
-    {
+TCelula* Predecessor(TCelula *x) {
+    if (x == NULL) {
         return NULL;
     }
 
     // Se x tem um filho a esquerda, o predecessor e o maximo da subarvore esquerda
-    if (x->esq != NULL)
-    {
+    if (x->esq != NULL) {
         return Maximo(x->esq);
     }
 
     // Senao, e o ancestral mais baixo cujo filho direito tambem e ancestral de x
     TCelula *y = x->pai;
-    while (y != NULL && x == y->esq)
-    {
+    while (y != NULL && x == y->esq) {
         x = y;
         y = y->pai;
     }
@@ -414,33 +351,27 @@ TCelula *Predecessor(TCelula *x)
 }
 
 // Funcao para mostrar os eventos de uma cidade
-void MostraEventos(TCidade cidade)
-{
+void MostraEventos(TCidade cidade) {
     printf("Eventos em %s:\n", cidade.nome);
-    for (int i = 0; i < cidade.numEventos; i++)
-    {
+    for (int i = 0; i < cidade.numEventos; i++) {
         printf("  %d. %s - Avaliacao: %.1f\n",
-               i + 1,
+               i+1,
                cidade.eventos[i].nome,
                cidade.eventos[i].avaliacao);
     }
 }
 
 // Funcao para liberar a memoria alocada para os eventos de uma cidade
-void LiberaEventos(TCidade *cidade)
-{
-    if (cidade->eventos != NULL)
-    {
+void LiberaEventos(TCidade *cidade) {
+    if (cidade->eventos != NULL) {
         free(cidade->eventos);
         cidade->eventos = NULL;
     }
 }
 
 // Funcao para liberar a memoria alocada para um no e seus descendentes
-void LiberaNo(TCelula *x)
-{
-    if (x != NULL)
-    {
+void LiberaNo(TCelula *x) {
+    if (x != NULL) {
         LiberaNo(x->esq);
         LiberaNo(x->dir);
         LiberaEventos(&(x->item.cidade));
@@ -449,14 +380,13 @@ void LiberaNo(TCelula *x)
 }
 
 // Funcao para liberar toda a memoria alocada para a arvore
-void LiberaArvore(TArvore *arvore)
-{
+void LiberaArvore(TArvore *arvore) {
     LiberaNo(arvore->raiz);
     arvore->raiz = NULL;
 }
 
-int main()
-{
+
+int main() {
     // Inicializa o gerador de numeros aleatorios
     srand(time(NULL));
 
@@ -481,12 +411,11 @@ int main()
     CaminhamentoPreOrdem(arvore.raiz);
 
     printf("\n === CAMINHAMENTO POS-ORDEM ===\n");
-    CaminhamentoPosOrdem(arvore.raiz);  
+    CaminhamentoPosOrdem(arvore.raiz);
 
     // Busca a cidade com a menor chave
     TCelula *minimo = Minimo(arvore.raiz);
-    if (minimo != NULL)
-    {
+    if (minimo != NULL) {
         printf("\n === CIDADE COM MENOR CHAVE ===\n");
         printf("Chave: %d, Cidade: %s\n", minimo->item.chave, minimo->item.cidade.nome);
         MostraEventos(minimo->item.cidade);
@@ -494,8 +423,7 @@ int main()
 
     // Busca a cidade com a maior chave
     TCelula *maximo = Maximo(arvore.raiz);
-    if (maximo != NULL)
-    {
+    if (maximo != NULL) {
         printf("\n === CIDADE COM MAIOR CHAVE ===\n");
         printf("Chave: %d, Cidade: %s\n", maximo->item.chave, maximo->item.cidade.nome);
         MostraEventos(maximo->item.cidade);
