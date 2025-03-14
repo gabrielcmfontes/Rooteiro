@@ -421,6 +421,58 @@ void MostraEventos(TCidade cidade)
     }
 }
 
+void BuscarEventoNaCidadePorNome(TCidade *cidade, char *nome)
+{
+    if (cidade == NULL)
+    {
+        printf("Cidade não encontrada.\n");
+        return;
+    }
+
+    int encontrado = 0;
+    for (int i = 0; i < cidade->numEventos; i++)
+    {
+        // Usar _stricmp para comparação case-insensitive
+        if (_stricmp(cidade->eventos[i].nome, nome) == 0)
+        {
+            printf("Cidade: %s\nNome do evento: %s\nAvaliação: %.1f\n",
+                   cidade->nome, cidade->eventos[i].nome, cidade->eventos[i].avaliacao);
+            encontrado = 1;
+        }
+    }
+
+    if (!encontrado)
+    {
+        printf("Evento '%s' não encontrado na cidade %s.\n", nome, cidade->nome);
+    }
+}
+
+void BuscarEventoNaCidadePorAvaliacao(TCidade *cidade, float avaliacao)
+{
+    if (cidade == NULL)
+    {
+        printf("Cidade não encontrada.\n");
+        return;
+    }
+
+    int encontrado = 0;
+    for (int i = 0; i < cidade->numEventos; i++)
+    {
+        // Usar _stricmp para comparação case-insensitive
+        if (cidade->eventos[i].avaliacao == avaliacao)
+        {
+            printf("Cidade: %s\nNome do evento: %s\nAvaliação: %.1f\n",
+                   cidade->nome, cidade->eventos[i].nome, cidade->eventos[i].avaliacao);
+            encontrado = 1;
+        }
+    }
+
+    if (!encontrado)
+    {
+        // TO DO - Caso nao encontre a avaliação desejada deve enviar o evento com a avaliação mais proxima de pedida
+    }
+}
+
 void MostrarTodosEventosDeTodasCidades(TCelula *raiz)
 {
     if (raiz == NULL)
@@ -453,7 +505,8 @@ void BuscarCidadePorEvento(char *nomeDoEvento, TCelula *raiz)
     int encontrou = 0;
     for (int i = 0; i < raiz->item.cidade.numEventos; i++)
     {
-        if (strcmp(nomeDoEvento, raiz->item.cidade.eventos[i].nome) == 0)
+        // Usar _stricmp para comparação case-insensitive
+        if (_stricmp(nomeDoEvento, raiz->item.cidade.eventos[i].nome) == 0)
         {
             printf("Cidade: %s\n", raiz->item.cidade.nome);
             encontrou = 1;
@@ -464,6 +517,30 @@ void BuscarCidadePorEvento(char *nomeDoEvento, TCelula *raiz)
     // Busca recursivamente nas subárvores
     BuscarCidadePorEvento(nomeDoEvento, raiz->esq);
     BuscarCidadePorEvento(nomeDoEvento, raiz->dir);
+}
+
+
+
+TCidade *buscarCidade(TCelula *raiz, char *nome)
+{
+    if (raiz == NULL)
+    {
+        return NULL;
+    }
+
+    // Usar _stricmp para comparação case-insensitive
+    if (_stricmp(raiz->item.cidade.nome, nome) == 0)
+    {
+        return &(raiz->item.cidade);
+    }
+
+    TCidade *resultado = buscarCidade(raiz->esq, nome);
+    if (resultado != NULL)
+    {
+        return resultado;
+    }
+
+    return buscarCidade(raiz->dir, nome);
 }
 
 // Funcao para liberar a memoria alocada para os eventos de uma cidade
@@ -519,6 +596,7 @@ int main()
         printf("\nMenu:\n");
         printf("1 - Mostrar eventos\n");
         printf("2 - Buscar cidade por evento\n");
+        printf("3- Buscar evento na cidade\n");
         printf("0 - Sair\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
@@ -529,7 +607,7 @@ int main()
             MostrarTodosEventosDeTodasCidades(arvore.raiz);
             break;
         case 2:
-            char nomeDoEvento[100]; 
+            char nomeDoEvento[100];
             printf("Digite o nome do evento que procura: ");
             // Limpar o buffer de entrada
             getchar();
@@ -537,11 +615,72 @@ int main()
             fgets(nomeDoEvento, 100, stdin);
             // Remover o caractere de nova linha no final, se existir
             size_t len = strlen(nomeDoEvento);
-            if (len > 0 && nomeDoEvento[len-1] == '\n') {
-                nomeDoEvento[len-1] = '\0';
+            if (len > 0 && nomeDoEvento[len - 1] == '\n')
+            {
+                nomeDoEvento[len - 1] = '\0';
             }
             BuscarCidadePorEvento(nomeDoEvento, arvore.raiz);
             break;
+        case 3:
+        {
+            char resposta[100];
+            char nomeCidade[100];
+
+            printf("Em qual cidade deseja procurar? ");
+            // Limpar o buffer de entrada
+            getchar();
+            // Usar fgets para ler a linha completa, incluindo espaços
+            fgets(nomeCidade, 100, stdin);
+            // Remover o caractere de nova linha no final
+            size_t len = strlen(nomeCidade);
+            if (len > 0 && nomeCidade[len - 1] == '\n')
+            {
+                nomeCidade[len - 1] = '\0';
+            }
+
+            printf("Deseja procurar o evento por nome ou avaliação? ");
+            fgets(resposta, 100, stdin);
+            // Remover o caractere de nova linha
+            len = strlen(resposta);
+            if (len > 0 && resposta[len - 1] == '\n')
+            {
+                resposta[len - 1] = '\0';
+            }
+
+            TCidade *cidadeEncontrada = buscarCidade(arvore.raiz, nomeCidade);
+
+            if (cidadeEncontrada == NULL)
+            {
+                printf("Cidade '%s' não encontrada.\n", nomeCidade);
+                break;
+            }
+
+            if (_stricmp(resposta, "Nome") == 0)
+            {
+                char nomeEvento[100];
+                printf("Qual o nome do evento? ");
+                fgets(nomeEvento, 100, stdin);
+                // Remover o caractere de nova linha
+                len = strlen(nomeEvento);
+                if (len > 0 && nomeEvento[len - 1] == '\n')
+                {
+                    nomeEvento[len - 1] = '\0';
+                }
+
+                BuscarEventoNaCidadePorNome(cidadeEncontrada, nomeEvento);
+            }
+            else if (strcasecmp(resposta, "Avaliação") == 0 ||
+                     strcasecmp(resposta, "Avaliacao") == 0)
+            {
+                printf("Você escolheu buscar por Avaliação.\n");
+                // Aqui você implementaria a busca por avaliação
+            }
+            else
+            {
+                printf("Opção inválida.\n");
+            }
+        }
+        break;
         case 0:
             printf("Saindo...\n");
             break;
