@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <math.h>
 
 // Definicao da estrutura para os eventos turisticos
 typedef struct evento
@@ -458,7 +459,6 @@ void BuscarEventoNaCidadePorAvaliacao(TCidade *cidade, float avaliacao)
     int encontrado = 0;
     for (int i = 0; i < cidade->numEventos; i++)
     {
-        // Usar _stricmp para comparação case-insensitive
         if (cidade->eventos[i].avaliacao == avaliacao)
         {
             printf("Cidade: %s\nNome do evento: %s\nAvaliação: %.1f\n",
@@ -469,7 +469,26 @@ void BuscarEventoNaCidadePorAvaliacao(TCidade *cidade, float avaliacao)
 
     if (!encontrado)
     {
-        // TO DO - Caso nao encontre a avaliação desejada deve enviar o evento com a avaliação mais proxima de pedida
+        // Inicializar com o primeiro evento
+        float menorDiferenca = fabs(avaliacao - cidade->eventos[0].avaliacao);
+        int indiceProximo = 0;
+        
+        // Procurar pelo evento com menor diferença de avaliação
+        for (int i = 1; i < cidade->numEventos; i++)
+        {
+            float diferenca = fabs(avaliacao - cidade->eventos[i].avaliacao);
+            if (diferenca < menorDiferenca)
+            {
+                menorDiferenca = diferenca;
+                indiceProximo = i;
+            }
+        }
+        
+        printf("Não encontramos evento com avaliação %.1f.\n", avaliacao);
+        printf("O evento com avaliação mais próxima é:\n");
+        printf("Cidade: %s\nNome do evento: %s\nAvaliação: %.1f\n",
+               cidade->nome, cidade->eventos[indiceProximo].nome, 
+               cidade->eventos[indiceProximo].avaliacao);
     }
 }
 
@@ -518,8 +537,6 @@ void BuscarCidadePorEvento(char *nomeDoEvento, TCelula *raiz)
     BuscarCidadePorEvento(nomeDoEvento, raiz->esq);
     BuscarCidadePorEvento(nomeDoEvento, raiz->dir);
 }
-
-
 
 TCidade *buscarCidade(TCelula *raiz, char *nome)
 {
@@ -672,8 +689,11 @@ int main()
             else if (strcasecmp(resposta, "Avaliação") == 0 ||
                      strcasecmp(resposta, "Avaliacao") == 0)
             {
-                printf("Você escolheu buscar por Avaliação.\n");
-                // Aqui você implementaria a busca por avaliação
+                char nota;
+                printf("Qual é avaliação desejada? Digite separando o decimal com .\n");
+                scanf("%f", &nota);
+                getchar();
+                BuscarEventoNaCidadePorAvaliacao(cidadeEncontrada, nota);  // FUNCAO NAO ESTA CERTA -> CONSERTAR !!
             }
             else
             {
