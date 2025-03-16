@@ -201,11 +201,11 @@ void GeraCidadesEventosPersonalizados(TArvore *arvore, int numCidades)
     // Estruturas para eventos personalizados
     char *eventosNomes[] = {
         "Festival de Musica", "Feira de Arte", "Mostra de Cinema",
-        "Tour pelos Pontos Turisticos", "Visita ao Museu",
-        "Passeio pela Praia", "Espetaculo de Teatro",
-        "Exposicao de Artesanato", "Festival Gastronomico",
-        "Tour Historico", "Passeio de Barco", "Visita a Mercados",
-        "Festival Cultural", "Tour Noturno", "Passeio Ecologico"};
+        "Tour pelos Pontos Turisticos", "Visita ao Museu", "Corrida de bicicleta na lagoa",
+        "Passeio pela Praia", "Espetaculo de Teatro", "Jogo de futebol do time da cidade",
+        "Exposicao de Artesanato", "Festival Gastronomico", "Gastronomia na praça"
+        "Tour Historico", "Passeio de Barco", "Visita a Mercados", "Museu da prefeitura"
+        "Festival Cultural", "Tour Noturno", "Passeio Ecologico", "Exposição de carros antigos"};
 
     float avaliacoes[] = {
         9.8, 8.5, 9.0, 9.5, 7.9,
@@ -232,8 +232,8 @@ void GeraCidadesEventosPersonalizados(TArvore *arvore, int numCidades)
         }
 
         // Criar eventos personalizados sem repetir
-        int eventosDisponiveis[15];
-        for (int j = 0; j < 15; j++)
+        int eventosDisponiveis[20];
+        for (int j = 0; j < 20; j++)
         {
             eventosDisponiveis[j] = j;
         }
@@ -582,6 +582,31 @@ void LiberaNo(TCelula *x)
     }
 }
 
+void randomMessage(){
+
+    const char *mensagens[] = {
+        "ATENÇÃO! EVENTOS ESPORTIVOS TERÃO PARTICIPAÇÕES DE ATLETAS PROFISSIONAIS",
+        "DICA: PRIORIZE OS EVENTOS COM AVALIAÇÕES ACIMA DE 9.0!",
+        "PROMOÇÃO ESPECIAL: EVENTOS MUSICAIS TERÃO COMIDA DE GRAÇA!",
+        "LEMBRETE: CONFIRME SUA PRESENÇA COM ANTECEDÊNCIA.",
+        "EVENTOS GASTRONÔMICOS ESTÃO NA METADE DO PREÇO!",
+        "NOVIDADE! O FESTIVAL DE MÚSICA CONTARÁ COM ARTISTAS INTERNACIONAIS",
+        "AVISO: TOUR NOTURNO AGORA INCLUI JANTAR COMPLETO!",
+        "ÚLTIMA HORA: INGRESSOS PARA A EXPOSIÇÃO DE CARROS ANTIGOS QUASE ESGOTADOS",
+        "PROMOÇÃO: LEVE 3 AMIGOS PARA O FESTIVAL GASTRONÔMICO E GANHE DESCONTO!",
+        "DICA DE VIAGEM: O PASSEIO DE BARCO OFERECE AS MELHORES VISTAS DA CIDADE",
+        "DESTAQUE: O ESPETÁCULO DE TEATRO RECEBEU CRÍTICAS EXCELENTES!",
+        "ALERTA DE CLIMA: EVENTOS AO AR LIVRE PODEM SER REMARCADOS EM CASO DE CHUVA",
+        "DICA CULTURAL: NÃO PERCA A EXPOSIÇÃO DE ARTESANATO COM ARTISTAS LOCAIS",
+        "EMERGÊNCIA: JOGO DE FUTEBOL DO TIME DA CIDADE MUDOU DE HORÁRIO"
+    };
+
+    int totalMensagens = sizeof(mensagens) / sizeof(mensagens[0]);
+    srand(time(NULL));
+    int indice = rand() % totalMensagens;
+    printf("\n\n\n=====================================================================================\n\n%s\n\n=====================================================================================\n", mensagens[indice]);
+}
+
 // Funcao para liberar toda a memoria alocada para a arvore
 void LiberaArvore(TArvore *arvore)
 {
@@ -622,6 +647,7 @@ int main()
         {
         case 1:
             MostrarTodosEventosDeTodasCidades(arvore.raiz);
+            randomMessage();
             break;
         case 2:
             char nomeDoEvento[100];
@@ -637,6 +663,7 @@ int main()
                 nomeDoEvento[len - 1] = '\0';
             }
             BuscarCidadePorEvento(nomeDoEvento, arvore.raiz);
+            randomMessage();
             break;
         case 3:
         {
@@ -689,17 +716,18 @@ int main()
             else if (strcasecmp(resposta, "Avaliação") == 0 ||
                      strcasecmp(resposta, "Avaliacao") == 0)
             {
-                char nota;
+                float nota;
                 printf("Qual é avaliação desejada? Digite separando o decimal com .\n");
                 scanf("%f", &nota);
                 getchar();
-                BuscarEventoNaCidadePorAvaliacao(cidadeEncontrada, nota);  // FUNCAO NAO ESTA CERTA -> CONSERTAR !!
+                BuscarEventoNaCidadePorAvaliacao(cidadeEncontrada, nota);  
             }
             else
             {
                 printf("Opção inválida.\n");
             }
         }
+        randomMessage();
         break;
         case 0:
             printf("Saindo...\n");
