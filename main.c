@@ -202,22 +202,24 @@ void GeraCidadesEventosPersonalizados(TArvore *arvore, int numCidades)
 {
     // Estruturas para eventos personalizados
     char *eventosNomes[] = {
-         "Festival de Musica", "Feira de Arte", "Mostra de Cinema",
-         "Tour pelos Pontos Turisticos", "Visita ao Museu",
-         "Passeio pela Praia", "Espetaculo de Teatro",
-         "Exposicao de Artesanato", "Festival Gastronomico",
-         "Tour Historico", "Passeio de Barco", "Visita a Mercados",
-         "Festival Cultural", "Tour Noturno", "Passeio Ecologico",
-         "Tour pelos Pontos Turisticos", "Visita ao Museu", "Corrida de bicicleta na lagoa",
-         "Passeio pela Praia", "Espetaculo de Teatro", "Jogo de futebol do time da cidade",
-         "Exposicao de Artesanato", "Festival Gastronomico", "Gastronomia na praça"
-         "Tour Historico", "Passeio de Barco", "Visita a Mercados", "Museu da prefeitura"
-         "Festival Cultural", "Tour Noturno", "Passeio Ecologico", "Exposição de carros antigos"};
+        "Festival de Musica", "Feira de Arte", "Mostra de Cinema",
+        "Tour pelos Pontos Turisticos", "Visita ao Museu",
+        "Passeio pela Praia", "Espetaculo de Teatro",
+        "Exposicao de Artesanato", "Festival Gastronomico",
+        "Tour Historico", "Passeio de Barco", "Visita a Mercados",
+        "Festival Cultural", "Tour Noturno", "Passeio Ecologico",
+        "Tour pelos Pontos Turisticos", "Visita ao Museu", "Corrida de bicicleta na lagoa",
+        "Passeio pela Praia", "Espetaculo de Teatro", "Jogo de futebol do time da cidade",
+        "Exposicao de Artesanato", "Festival Gastronomico", "Gastronomia na praça"
+                                                            "Tour Historico",
+        "Passeio de Barco", "Visita a Mercados", "Museu da prefeitura"
+                                                 "Festival Cultural",
+        "Tour Noturno", "Passeio Ecologico", "Exposição de carros antigos"};
 
-         float avaliacoes[] = {
-            9.8, 8.5, 9.0, 9.5, 7.9,
-            9.2, 8.0, 8.3, 9.7, 8.6,
-            9.3, 8.9, 9.6, 8.2, 9.4};   
+    float avaliacoes[] = {
+        9.8, 8.5, 9.0, 9.5, 7.9,
+        9.2, 8.0, 8.3, 9.7, 8.6,
+        9.3, 8.9, 9.6, 8.2, 9.4};
 
     for (int i = 0; i < numCidades; i++)
     {
@@ -269,7 +271,7 @@ void GeraCidadesEventosPersonalizados(TArvore *arvore, int numCidades)
     printf("Geradas %d cidades usando o algoritmo original com eventos personalizados.\n", numCidades);
 }
 
-// Percurso in-ordem (caminhamento central)
+// Percurso in-ordem (caminhamento central) -> Só Printa a arvore por caminhamento central
 void CaminhamentoCentral(TCelula *x)
 {
     if (x != NULL)
@@ -283,8 +285,8 @@ void CaminhamentoCentral(TCelula *x)
     }
 }
 
-// Percurso pre-ordem
-void CaminhamentoPreOrdem(TCelula *x)
+// Percurso pre-ordem -> Só Printa a arvore por caminhamento pre ordem
+void CaminhamentoPreOrdem(TCelula *x) 
 {
     if (x != NULL)
     {
@@ -297,7 +299,7 @@ void CaminhamentoPreOrdem(TCelula *x)
     }
 }
 
-// Percurso pos-ordem
+// Percurso pos-ordem -> Só Printa a arvore por caminhamento pos ordem
 void CaminhamentoPosOrdem(TCelula *x)
 {
     if (x != NULL)
@@ -312,7 +314,6 @@ void CaminhamentoPosOrdem(TCelula *x)
 }
 
 // Funcao para buscar um no com uma determinada chave na arvore
-
 TCelula *Busca(TCelula *x, char *nome)
 {
     if (x == NULL || strcmp(x->item.cidade.nome, nome) == 0)
@@ -334,7 +335,8 @@ void PesquisaEvento(char nomeDoEvento, TArvore arvore)
 {
 }
 
-// Funcao para encontrar o no com a chave minima na arvore
+// Funcao para encontrar o no com a chave minima na arvore // BAIANOOOOOOO ai em vez de ser a chave vai ser a nota media de eventos
+// Deve mostrar a cidade com menor nota media
 TCelula *Minimo(TCelula *x)
 {
     if (x == NULL)
@@ -351,6 +353,7 @@ TCelula *Minimo(TCelula *x)
 }
 
 // Funcao para encontrar o no com a chave maxima na arvore
+// Deve mostrar a cidade com maior nota media
 TCelula *Maximo(TCelula *x)
 {
     if (x == NULL)
@@ -367,6 +370,7 @@ TCelula *Maximo(TCelula *x)
 }
 
 // Funcao para encontrar o sucessor de um no x
+// nao entendi funcionalidade direito
 TCelula *Sucessor(TCelula *x)
 {
     if (x == NULL)
@@ -392,6 +396,7 @@ TCelula *Sucessor(TCelula *x)
 }
 
 // Funcao para encontrar o predecessor de um no x
+// nao entendi funcionalidade direito
 TCelula *Predecessor(TCelula *x)
 {
     if (x == NULL)
@@ -429,6 +434,7 @@ void MostraEventos(TCidade cidade)
     }
 }
 
+// Busca algum evento numa cidade por nome do evento
 void BuscarEventoNaCidadePorNome(TCidade *cidade, char *nome)
 {
     if (cidade == NULL)
@@ -455,6 +461,7 @@ void BuscarEventoNaCidadePorNome(TCidade *cidade, char *nome)
     }
 }
 
+// Busca algum evento na cidade por avaliação do evento
 void BuscarEventoNaCidadePorAvaliacao(TCidade *cidade, float avaliacao)
 {
     if (cidade == NULL)
@@ -499,6 +506,7 @@ void BuscarEventoNaCidadePorAvaliacao(TCidade *cidade, float avaliacao)
     }
 }
 
+// Mostra todos os eventos de todas as cidades da arvore
 void MostrarTodosEventosDeTodasCidades(TCelula *raiz)
 {
     if (raiz == NULL)
@@ -520,6 +528,9 @@ void MostrarTodosEventosDeTodasCidades(TCelula *raiz)
     MostrarTodosEventosDeTodasCidades(raiz->dir);
 }
 
+// Busca cidade na arvore
+// Criei e usei para criara roteiro
+// Tentei mudar pela funcao *Busca depois que vi que existia, mas deu erro, mantive essa
 TCidade *buscarCidade(TCelula *raiz, char *nome)
 {
     if (raiz == NULL)
@@ -542,6 +553,7 @@ TCidade *buscarCidade(TCelula *raiz, char *nome)
     return buscarCidade(raiz->dir, nome);
 }
 
+// Mostra o melhor evento de uma cidade, usando para criar roteiro
 char *mostraMelhorEvento(TCidade *cidade)
 {
     if (cidade == NULL || cidade->numEventos == 0)
@@ -564,6 +576,7 @@ char *mostraMelhorEvento(TCidade *cidade)
     return cidade->eventos[loc].nome;
 }
 
+// Cria o roteiro
 void criarRoteiro(TCelula *raiz)
 {
     char nomeCidade[3][50];
@@ -584,7 +597,8 @@ void criarRoteiro(TCelula *raiz)
         }
     }
 
-    printf("\n===== SEU ROTEIRO DE VIAGEM =====\n");
+    printf("\n================================================================= SEU ROTEIRO DE VIAGEM ================================================================\n");
+    printf("\n");
 
     for (int i = 0; i < 3; i++)
     {
@@ -604,7 +618,7 @@ void criarRoteiro(TCelula *raiz)
         }
         else
         {
-            printf("%d. %s: %s (Avaliação: %.1f)\n",
+            printf("%d. %s: %s (Avaliação: %.1f)",
                    i + 1,
                    cidade->nome,
                    melhorEvento,
@@ -613,13 +627,14 @@ void criarRoteiro(TCelula *raiz)
 
         if (i < 2)
         {
-            printf("   |\n   v\n");
+            printf(" -> ");
         }
     }
-
-    printf("\n=================================\n");
-    printf("Roteiro criado com sucesso! Boa viagem!\n");
+    printf("\n");
+    printf("\n========================================================================================================================================================\n");
 }
+
+// O usuario digita um evento e mostra qual cidade esta tendo ele
 void BuscarCidadePorEvento(char *nomeDoEvento, TCelula *raiz)
 {
     if (raiz == NULL)
@@ -629,12 +644,13 @@ void BuscarCidadePorEvento(char *nomeDoEvento, TCelula *raiz)
 
     // Verifica se algum evento da cidade atual corresponde ao nome buscado
     int encontrou = 0;
+
     for (int i = 0; i < raiz->item.cidade.numEventos; i++)
     {
         // Usar _stricmp para comparação case-insensitive
         if (_stricmp(nomeDoEvento, raiz->item.cidade.eventos[i].nome) == 0)
         {
-            printf("Cidade: %s\n", raiz->item.cidade.nome);
+            printf("\nCidade: %s\n", raiz->item.cidade.nome);
             encontrou = 1;
             break; // Sai do loop depois de encontrar o primeiro evento correspondente
         }
@@ -667,7 +683,8 @@ void LiberaNo(TCelula *x)
     }
 }
 
-void randomMessage()
+// Gera mensagens aleatorias a cada ordem
+void mensagemAleatoria()
 {
 
     const char *mensagens[] = {
@@ -689,7 +706,79 @@ void randomMessage()
     int totalMensagens = sizeof(mensagens) / sizeof(mensagens[0]);
     srand(time(NULL));
     int indice = rand() % totalMensagens;
-    printf("\n\n\n=====================================================================================\n\n%s\n\n=====================================================================================\n", mensagens[indice]);
+    printf("\n\n=====================================================================================\n\n%s\n\n=====================================================================================\n", mensagens[indice]);
+}
+
+// Remove e adiciona eventos aleatoriamente
+// 50% de funcionar 50% de nao fazer nada
+void EventosAleatorios(TCelula *raiz) {
+    // Rand para ver se roda ou nao
+    int probabilidade = rand() % 2 + 1; 
+    if (probabilidade == 1) {
+        return; 
+    }
+
+    if (raiz == NULL) {
+        return;
+    }
+
+    static int removido = 0;
+    static char nomeEventoRemovido[50];
+
+    // Vetor de números aleatórios para seleção
+    int numAleatorios[] = {2, 5, 7, 9, 4, 6, 3, 8, 1, 0};
+    int indice = rand() % 10;
+    int escolhido = numAleatorios[indice];
+
+    // Opções de eventos temporários
+    char *eventosTemporarios[] = {
+        "Teatro Cultural na Praça", 
+        "Jogo de Futebol Beneficente", 
+        "Aniversário da Cidade", 
+        "Amostra Grátis de Torta", 
+        "Festival de Rua de Música", 
+        "Corrida Beneficente", 
+        "Feira de Artesanato Local", 
+        "Show de Talentos Amadores", 
+        "Inauguração de Espaço Cultural", 
+        "Dia de Conscientização Ambiental"
+    };
+
+    int escolha[] = {10, 20};
+    int indice2 = rand() % 2;
+    int opcao = escolha[indice2];
+
+    // Remover evento existente
+    if (opcao == 10) {
+        if (raiz->item.chave == escolhido) {
+            // Verificar se há eventos para remover
+            if (raiz->item.cidade.numEventos > 0) {
+                // Salvar o nome do evento removido
+                strcpy(nomeEventoRemovido, raiz->item.cidade.eventos[escolhido % raiz->item.cidade.numEventos].nome);
+
+                printf("O evento '%s' foi cancelado!\n", nomeEventoRemovido);
+                removido = 1;
+            }
+        }
+
+        // Se já foi removido, adicionar de volta
+        if (removido == 1) {
+            printf("Evento %s adicionado de volta!\n", nomeEventoRemovido);
+            removido = 0;
+        }
+    } 
+    // Criar evento temporário
+    else if (opcao == 20) {
+        int indiceEventoTemp = rand() % 10;
+        char *eventoEscolhido = eventosTemporarios[indiceEventoTemp];
+        
+        printf("EVENTO ESPECIAL TEMPORÁRIO na cidade %s: %s - Evento dura só hoje!!\n", 
+               raiz->item.cidade.nome, eventoEscolhido);
+    }
+
+    // Continuar a traversal na árvore
+    EventosAleatorios(raiz->esq);
+    EventosAleatorios(raiz->dir);
 }
 
 // Funcao para liberar toda a memoria alocada para a arvore
@@ -723,9 +812,10 @@ int main()
     {
         printf("\nMenu:\n");
         printf("1 - Mostrar eventos\n");
-        printf("2 - Buscar cidade por evento\n");
-        printf("3- Buscar evento na cidade\n");
-        printf("4- Criar roteiro\n");
+        printf("2 - Caminhamente central\n");
+        printf("3 - Buscar cidade por evento\n");
+        printf("4 - Buscar evento na cidade\n");
+        printf("5 - Criar roteiro\n");
         printf("0 - Sair\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
@@ -734,9 +824,17 @@ int main()
         {
         case 1:
             MostrarTodosEventosDeTodasCidades(arvore.raiz);
-            randomMessage();
+            mensagemAleatoria();
+            printf("\n");
+            EventosAleatorios(arvore.raiz);
             break;
         case 2:
+            CaminhamentoCentral(arvore.raiz);
+            mensagemAleatoria();
+            printf("\n");
+            EventosAleatorios(arvore.raiz);
+            break;
+        case 3:
             char nomeDoEvento[100];
             printf("Digite o nome do evento que procura: ");
             // Limpar o buffer de entrada
@@ -750,9 +848,11 @@ int main()
                 nomeDoEvento[len - 1] = '\0';
             }
             BuscarCidadePorEvento(nomeDoEvento, arvore.raiz);
-            randomMessage();
+            mensagemAleatoria();
+            printf("\n");
+            EventosAleatorios(arvore.raiz);
             break;
-        case 3:
+        case 4:
         {
             char resposta[100];
             char nomeCidade[100];
@@ -814,11 +914,15 @@ int main()
                 printf("Opção inválida.\n");
             }
         }
-            randomMessage();
+            mensagemAleatoria();
+            printf("\n");
+            EventosAleatorios(arvore.raiz);
             break;
-        case 4:
+        case 5:
             criarRoteiro(arvore.raiz);
-            randomMessage();
+            mensagemAleatoria();
+            printf("\n");
+            EventosAleatorios(arvore.raiz);
             break;
         case 0:
             printf("Saindo...\n");
