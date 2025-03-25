@@ -18,7 +18,7 @@ typedef struct cidade
     char nome[50];
     TEvento *eventos;
     int numEventos;
-    // float notaMediaDosEventos;
+    float notaMedia;
 } TCidade;
 
 // Definicao da estrutura para os itens da arvore
@@ -42,6 +42,31 @@ typedef struct arvore
 {
     TCelula *raiz;
 } TArvore;
+
+void CalculaMediaCidade(TCidade *cidade) {
+    if (cidade->numEventos == 0) {
+        cidade->notaMedia = 0.0;
+        return;
+    }
+
+    float soma = 0.0;
+    for (int i = 0; i < cidade->numEventos; i++) {
+        soma += cidade->eventos[i].avaliacao;
+    }
+    cidade->notaMedia = soma / cidade->numEventos;
+}
+
+int ColetaCidades(TCelula *raiz, TCidade *cidades, int index) {
+    if (raiz == NULL) {
+        return index;
+    }
+
+    index = ColetaCidades(raiz->esq, cidades, index);
+    cidades[index++] = raiz->item.cidade;
+    index = ColetaCidades(raiz->dir, cidades, index);
+
+    return index;
+}
 
 // Funcao para inicializar a arvore
 void InicializaArvore(TArvore *arvore)
@@ -786,6 +811,391 @@ void LiberaArvore(TArvore *arvore)
 {
     LiberaNo(arvore->raiz);
     arvore->raiz = NULL;
+}
+
+void Merge(void *x, int l, int m, int r, int tipo) {
+    if (tipo == 0) {
+        TCidade *base = (TCidade*)x;
+        int n1 = m - l + 1;
+        int n2 = r - m;
+
+        TCidade *L = malloc(n1 * sizeof(TCidade));
+        TCidade *R = malloc(n2 * sizeof(TCidade));
+
+        for (int i = 0; i < n1; i++)
+            L[i] = base[l + i];
+        for (int j = 0; j < n2; j++)
+            R[j] = base[m + 1 + j];
+
+        int i = 0, j = 0, k = l;
+        while (i < n1 && j < n2) {
+            if (L[i].notaMedia <= R[j].notaMedia) {
+                base[k] = L[i];
+                i++;
+            } else {
+                base[k] = R[j];
+                j++;
+            }
+            k++;
+        }
+
+
+        while (i < n1) {
+            base[k] = L[i];
+            i++;
+            k++;
+        }
+
+
+        while (j < n2) {
+            base[k] = R[j];
+            j++;
+            k++;
+        }
+
+
+        free(L);
+        free(R);
+    }
+    else if (tipo == 1) {
+        TEvento *base = (TEvento*)x;
+        int n1 = m - l + 1;
+        int n2 = r - m;
+
+        TEvento *L = malloc(n1 * sizeof(TEvento));
+        TEvento *R = malloc(n2 * sizeof(TEvento));
+
+        for (int i = 0; i < n1; i++)
+            L[i] = base[l + i];
+        for (int j = 0; j < n2; j++)
+            R[j] = base[m + 1 + j];
+
+        int i = 0, j = 0, k = l;
+        while (i < n1 && j < n2) {
+            if (L[i].avaliacao <= R[j].avaliacao) {
+                base[k] = L[i];
+                i++;
+            } else {
+                base[k] = R[j];
+                j++;
+            }
+            k++;
+        }
+
+        while (i < n1) {
+            base[k] = L[i];
+            i++;
+            k++;
+        }
+
+        while (j < n2) {
+            base[k] = R[j];
+            j++;
+            k++;
+        }
+
+
+        free(L);
+        free(R);
+    }
+}
+
+// Função MergeSort genérica
+void MergeSort(void *x, int l, int r, int tipo) {
+    if (l >= r) {
+        return;
+    }
+
+    int m = l + (r - l) / 2;
+
+    MergeSort(x, l, m, tipo);
+    MergeSort(x, m + 1, r, tipo);
+    Merge(x, l, m, r, tipo);
+}
+
+// Função para ordenar cidades por nota média usando MergeSort
+void MergeSortCidades(TCidade *cidades, int n) {
+    MergeSort(cidades, 0, n - 1, 0);
+}
+
+// Função para ordenar eventos de uma cidade por avaliação usando MergeSort
+void MergeSortEventos(TEvento *eventos, int n) {
+    MergeSort(eventos, 0, n - 1, 1);
+}
+
+// Funções de troca genéricas
+void trocar(void *a, void *b, size_t size) {
+    char temp[size];
+    memcpy(temp, a, size);
+    memcpy(a, b, size);
+    memcpy(b, temp, size);
+}
+
+// Selection Sort genérico
+void SelectionSort(void *x, int n, int tipo) {
+    if (tipo == 0) {
+        TCidade *cidades = (TCidade*)x;
+        for (int i = 0; i < n - 1; i++) {
+            int min_idx = i;
+            for (int j = i + 1; j < n; j++) {
+                if (cidades[j].notaMedia < cidades[min_idx].notaMedia) {
+                    min_idx = j;
+                }
+            }
+            if (min_idx != i) {
+                trocar(&cidades[i], &cidades[min_idx], sizeof(TCidade));
+            }
+        }
+    }
+    else if (tipo == 1) {
+        TEvento *eventos = (TEvento*)x;
+        for (int i = 0; i < n - 1; i++) {
+            int min_idx = i;
+            for (int j = i + 1; j < n; j++) {
+                if (eventos[j].avaliacao < eventos[min_idx].avaliacao) {
+                    min_idx = j;
+                }
+            }
+            if (min_idx != i) {
+                trocar(&eventos[i], &eventos[min_idx], sizeof(TEvento));
+            }
+        }
+    }
+}
+
+// Insertion Sort genérico
+void InsertionSort(void *x, int n, int tipo) {
+    if (tipo == 0) { // Cidades por nota média
+        TCidade *cidades = (TCidade*)x;
+        for (int i = 1; i < n; i++) {
+            TCidade chave = cidades[i];
+            int j = i - 1;
+
+            while (j >= 0 && cidades[j].notaMedia > chave.notaMedia) {
+                cidades[j + 1] = cidades[j];
+                j = j - 1;
+            }
+            cidades[j + 1] = chave;
+        }
+    }
+    else if (tipo == 1) {
+        TEvento *eventos = (TEvento*)x;
+        for (int i = 1; i < n; i++) {
+            TEvento chave = eventos[i];
+            int j = i - 1;
+
+            while (j >= 0 && eventos[j].avaliacao > chave.avaliacao) {
+                eventos[j + 1] = eventos[j];
+                j = j - 1;
+            }
+            eventos[j + 1] = chave;
+        }
+    }
+}
+
+// Shell Sort genérico
+void ShellSort(void *x, int n, int tipo) {
+    if (tipo == 0) {
+        TCidade *cidades = (TCidade*)x;
+        for (int gap = n/2; gap > 0; gap /= 2) {
+            for (int i = gap; i < n; i++) {
+                TCidade temp = cidades[i];
+                int j;
+
+                for (j = i; j >= gap && cidades[j - gap].notaMedia > temp.notaMedia; j -= gap) {
+                    cidades[j] = cidades[j - gap];
+                }
+
+                cidades[j] = temp;
+            }
+        }
+    }
+    else if (tipo == 1) {
+        TEvento *eventos = (TEvento*)x;
+        for (int gap = n/2; gap > 0; gap /= 2) {
+            for (int i = gap; i < n; i++) {
+                TEvento temp = eventos[i];
+                int j;
+
+                for (j = i; j >= gap && eventos[j - gap].avaliacao > temp.avaliacao; j -= gap) {
+                    eventos[j] = eventos[j - gap];
+                }
+
+                eventos[j] = temp;
+            }
+        }
+    }
+}
+
+// Bubble Sort genérico
+void BubbleSort(void *x, int n, int tipo) {
+    if (tipo == 0) {
+        TCidade *cidades = (TCidade*)x;
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (cidades[j].notaMedia > cidades[j + 1].notaMedia) {
+                    trocar(&cidades[j], &cidades[j + 1], sizeof(TCidade));
+                }
+            }
+        }
+    }
+    else if (tipo == 1) {
+        TEvento *eventos = (TEvento*)x;
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (eventos[j].avaliacao > eventos[j + 1].avaliacao) {
+                    trocar(&eventos[j], &eventos[j + 1], sizeof(TEvento));
+                }
+            }
+        }
+    }
+}
+
+// Heap Sort - Funções auxiliares
+void heapify(void *x, int n, int i, int tipo) {
+    if (tipo == 0) {
+        TCidade *cidades = (TCidade*)x;
+        int largest = i;
+        int left = 2 * i + 1;
+        int right = 2 * i + 2;
+
+        if (left < n && cidades[left].notaMedia > cidades[largest].notaMedia)
+            largest = left;
+
+        if (right < n && cidades[right].notaMedia > cidades[largest].notaMedia)
+            largest = right;
+
+        if (largest != i) {
+            trocar(&cidades[i], &cidades[largest], sizeof(TCidade));
+            heapify(x, n, largest, tipo);
+        }
+    }
+    else if (tipo == 1) {
+        TEvento *eventos = (TEvento*)x;
+        int largest = i;
+        int left = 2 * i + 1;
+        int right = 2 * i + 2;
+
+        if (left < n && eventos[left].avaliacao > eventos[largest].avaliacao)
+            largest = left;
+
+        if (right < n && eventos[right].avaliacao > eventos[largest].avaliacao)
+            largest = right;
+
+        if (largest != i) {
+            trocar(&eventos[i], &eventos[largest], sizeof(TEvento));
+            heapify(x, n, largest, tipo);
+        }
+    }
+}
+
+void HeapSort(void *x, int n, int tipo) {
+    // Construir heap (reorganizar array)
+    for (int i = n / 2 - 1; i >= 0; i--)
+        heapify(x, n, i, tipo);
+
+    // Extrair elementos do heap um por um
+    for (int i = n - 1; i > 0; i--) {
+        if (tipo == 0) { // Cidades
+            trocar(&((TCidade*)x)[0], &((TCidade*)x)[i], sizeof(TCidade));
+        } else { // Eventos
+            trocar(&((TEvento*)x)[0], &((TEvento*)x)[i], sizeof(TEvento));
+        }
+        heapify(x, i, 0, tipo);
+    }
+}
+
+// Quick Sort - Funções auxiliares
+int particionar(void *x, int low, int high, int tipo) {
+    if (tipo == 0) {
+        TCidade *cidades = (TCidade*)x;
+        float pivot = cidades[high].notaMedia;
+        int i = (low - 1);
+
+        for (int j = low; j <= high - 1; j++) {
+            if (cidades[j].notaMedia <= pivot) {
+                i++;
+                trocar(&cidades[i], &cidades[j], sizeof(TCidade));
+            }
+        }
+        trocar(&cidades[i + 1], &cidades[high], sizeof(TCidade));
+        return (i + 1);
+    }
+    else {
+        TEvento *eventos = (TEvento*)x;
+        float pivot = eventos[high].avaliacao;
+        int i = (low - 1);
+
+        for (int j = low; j <= high - 1; j++) {
+            if (eventos[j].avaliacao <= pivot) {
+                i++;
+                trocar(&eventos[i], &eventos[j], sizeof(TEvento));
+            }
+        }
+        trocar(&eventos[i + 1], &eventos[high], sizeof(TEvento));
+        return (i + 1);
+    }
+}
+
+void QuickSortRecursivo(void *x, int low, int high, int tipo) {
+    if (low < high) {
+        int pi = particionar(x, low, high, tipo);
+        QuickSortRecursivo(x, low, pi - 1, tipo);
+        QuickSortRecursivo(x, pi + 1, high, tipo);
+    }
+}
+
+void QuickSort(void *x, int n, int tipo) {
+    QuickSortRecursivo(x, 0, n - 1, tipo);
+}
+
+// Funções de conveniência para cada tipo
+void SelectionSortCidades(TCidade *cidades, int n) {
+    SelectionSort(cidades, n, 0);
+}
+
+void InsertionSortCidades(TCidade *cidades, int n) {
+    InsertionSort(cidades, n, 0);
+}
+
+void ShellSortCidades(TCidade *cidades, int n) {
+    ShellSort(cidades, n, 0);
+}
+
+void BubbleSortCidades(TCidade *cidades, int n) {
+    BubbleSort(cidades, n, 0);
+}
+
+void HeapSortCidades(TCidade *cidades, int n) {
+    HeapSort(cidades, n, 0);
+}
+
+void QuickSortCidades(TCidade *cidades, int n) {
+    QuickSort(cidades, n, 0);
+}
+
+void SelectionSortEventos(TEvento *eventos, int n) {
+    SelectionSort(eventos, n, 1);
+}
+
+void InsertionSortEventos(TEvento *eventos, int n) {
+    InsertionSort(eventos, n, 1);
+}
+
+void ShellSortEventos(TEvento *eventos, int n) {
+    ShellSort(eventos, n, 1);
+}
+
+void BubbleSortEventos(TEvento *eventos, int n) {
+    BubbleSort(eventos, n, 1);
+}
+
+void HeapSortEventos(TEvento *eventos, int n) {
+    HeapSort(eventos, n, 1);
+}
+
+void QuickSortEventos(TEvento *eventos, int n) {
+    QuickSort(eventos, n, 1);
 }
 
 int main()
