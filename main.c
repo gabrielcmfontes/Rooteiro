@@ -1301,7 +1301,7 @@ int main()
                     }
                     case 2: {
                         float nota;
-                        printf("Qual é a avaliação desejada? (Digite separando o decimal com .):\n");
+                        printf("Qual é a avaliação desejada? (Digite separando o decimal com ,):\n");
                         scanf("%f", &nota);
                         getchar(); // Clear input buffer
 
