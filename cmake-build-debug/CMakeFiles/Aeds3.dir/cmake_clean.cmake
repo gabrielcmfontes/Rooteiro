@@ -4,6 +4,8 @@ file(REMOVE_RECURSE
   "Aeds3.pdb"
   "CMakeFiles/Aeds3.dir/main.c.obj"
   "CMakeFiles/Aeds3.dir/main.c.obj.d"
+  "CMakeFiles/Aeds3.dir/main2.c.obj"
+  "CMakeFiles/Aeds3.dir/main2.c.obj.d"
   "libAeds3.dll.a"
 )
 
