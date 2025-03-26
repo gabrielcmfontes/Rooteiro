@@ -1222,123 +1222,317 @@ int main()
     {
         printf("\nMenu:\n");
         printf("1 - Mostrar eventos\n");
-        printf("2 - Caminhamente central\n");
-        printf("3 - Buscar cidade por evento\n");
-        printf("4 - Buscar evento na cidade\n");
-        printf("5 - Criar roteiro\n");
+        printf("2 - Caminhamento central\n");
+        printf("3 - Caminhamento pré-ordem\n");
+        printf("4 - Caminhamento pós-ordem\n");
+        printf("5 - Buscar cidade por evento\n");
+        printf("6 - Buscar evento na cidade\n");
+        printf("7 - Buscar cidades com determinado evento\n");
+        printf("8 - Cidade com a menor nota média\n");
+        printf("9 - Cidade com a maior nota média\n");
+        printf("10 - Criar roteiro\n");
+        printf("11 - Ordenar cidades\n");
+        printf("12 - Ordenar eventos\n");
         printf("0 - Sair\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
 
         switch (opcao)
         {
-        case 1:
-            MostrarTodosEventosDeTodasCidades(arvore.raiz);
-            mensagemAleatoria();
-            printf("\n");
-            EventosAleatorios(arvore.raiz);
-            break;
-        case 2:
-            CaminhamentoCentral(arvore.raiz);
-            mensagemAleatoria();
-            printf("\n");
-            EventosAleatorios(arvore.raiz);
-            break;
-        case 3:
-            char nomeDoEvento[100];
-            printf("Digite o nome do evento que procura: ");
-            // Limpar o buffer de entrada
-            getchar();
-            // Usar fgets para ler a linha completa, incluindo espaços
-            fgets(nomeDoEvento, 100, stdin);
-            // Remover o caractere de nova linha no final, se existir
-            size_t len = strlen(nomeDoEvento);
-            if (len > 0 && nomeDoEvento[len - 1] == '\n')
-            {
-                nomeDoEvento[len - 1] = '\0';
-            }
-            BuscarCidadePorEvento(nomeDoEvento, arvore.raiz);
-            mensagemAleatoria();
-            printf("\n");
-            EventosAleatorios(arvore.raiz);
-            break;
-        case 4:
-        {
-            char resposta[100];
-            char nomeCidade[100];
-
-            printf("Em qual cidade deseja procurar? ");
-            // Limpar o buffer de entrada
-            getchar();
-            // Usar fgets para ler a linha completa, incluindo espaços
-            fgets(nomeCidade, 100, stdin);
-            // Remover o caractere de nova linha no final
-            size_t len = strlen(nomeCidade);
-            if (len > 0 && nomeCidade[len - 1] == '\n')
-            {
-                nomeCidade[len - 1] = '\0';
-            }
-
-            printf("Deseja procurar o evento por nome ou avaliação? ");
-            fgets(resposta, 100, stdin);
-            // Remover o caractere de nova linha
-            len = strlen(resposta);
-            if (len > 0 && resposta[len - 1] == '\n')
-            {
-                resposta[len - 1] = '\0';
-            }
-
-            TCidade *cidadeEncontrada = buscarCidade(arvore.raiz, nomeCidade);
-
-            if (cidadeEncontrada == NULL)
-            {
-                printf("Cidade '%s' não encontrada.\n", nomeCidade);
+            case 1:
+                MostrarTodosEventosDeTodasCidades(arvore.raiz);
+                mensagemAleatoria();
+                printf("\n");
+                EventosAleatorios(arvore.raiz);
                 break;
-            }
-
-            if (_stricmp(resposta, "Nome") == 0)
+            case 2:
+                CaminhamentoCentral(arvore.raiz);
+                mensagemAleatoria();
+                printf("\n");
+                EventosAleatorios(arvore.raiz);
+                break;
+            case 3:
+                CaminhamentoPreOrdem(arvore.raiz);
+                mensagemAleatoria();
+                printf("\n");
+                EventosAleatorios(arvore.raiz);
+                break;
+            case 4:
+                CaminhamentoPosOrdem(arvore.raiz);
+                mensagemAleatoria();
+                printf("\n");
+                EventosAleatorios(arvore.raiz);
+                break;
+            case 5:
+                char nomeDoEvento[100];
+                printf("Digite o nome do evento que procura: ");
+                // Limpar o buffer de entrada
+                getchar();
+                // Usar fgets para ler a linha completa, incluindo espaços
+                fgets(nomeDoEvento, 100, stdin);
+                // Remover o caractere de nova linha no final, se existir
+                size_t len = strlen(nomeDoEvento);
+                if (len > 0 && nomeDoEvento[len - 1] == '\n')
+                {
+                    nomeDoEvento[len - 1] = '\0';
+                }
+                BuscarCidadePorEvento(nomeDoEvento, arvore.raiz);
+                mensagemAleatoria();
+                printf("\n");
+                EventosAleatorios(arvore.raiz);
+                break;
+            case 6:
             {
-                char nomeEvento[100];
-                printf("Qual o nome do evento? ");
-                fgets(nomeEvento, 100, stdin);
+                char resposta[100];
+                char nomeCidade[100];
+
+                printf("Em qual cidade deseja procurar? ");
+                // Limpar o buffer de entrada
+                getchar();
+                // Usar fgets para ler a linha completa, incluindo espaços
+                fgets(nomeCidade, 100, stdin);
+                // Remover o caractere de nova linha no final
+                size_t len = strlen(nomeCidade);
+                if (len > 0 && nomeCidade[len - 1] == '\n')
+                {
+                    nomeCidade[len - 1] = '\0';
+                }
+
+                printf("Deseja procurar o evento por nome ou avaliação? ");
+                fgets(resposta, 100, stdin);
                 // Remover o caractere de nova linha
-                len = strlen(nomeEvento);
+                len = strlen(resposta);
+                if (len > 0 && resposta[len - 1] == '\n')
+                {
+                    resposta[len - 1] = '\0';
+                }
+
+                TCidade *cidadeEncontrada = buscarCidade(arvore.raiz, nomeCidade);
+
+                if (cidadeEncontrada == NULL)
+                {
+                    printf("Cidade '%s' não encontrada.\n", nomeCidade);
+                    break;
+                }
+
+                if (_stricmp(resposta, "Nome") == 0)
+                {
+                    char nomeEvento[100];
+                    printf("Qual o nome do evento? ");
+                    fgets(nomeEvento, 100, stdin);
+                    // Remover o caractere de nova linha
+                    len = strlen(nomeEvento);
+                    if (len > 0 && nomeEvento[len - 1] == '\n')
+                    {
+                        nomeEvento[len - 1] = '\0';
+                    }
+
+                    BuscarEventoNaCidadePorNome(cidadeEncontrada, nomeEvento);
+                }
+                else if (strcasecmp(resposta, "Avaliação") == 0 ||
+                         strcasecmp(resposta, "Avaliacao") == 0)
+                {
+                    float nota;
+                    printf("Qual é avaliação desejada? Digite separando o decimal com .\n");
+                    scanf("%f", &nota);
+                    getchar();
+                    BuscarEventoNaCidadePorAvaliacao(cidadeEncontrada, nota);
+                }
+                else
+                {
+                    printf("Opção inválida.\n");
+                }
+            }
+                mensagemAleatoria();
+                printf("\n");
+                EventosAleatorios(arvore.raiz);
+                break;
+            case 7:
+                char nomeEvento[100];
+                printf("Digite o nome do evento para buscar nas cidades: ");
+                getchar();
+                fgets(nomeEvento, 100, stdin);
+                size_t len1 = strlen(nomeEvento);
                 if (len > 0 && nomeEvento[len - 1] == '\n')
                 {
                     nomeEvento[len - 1] = '\0';
                 }
+                BuscarCidadePorEvento(nomeEvento, arvore.raiz);
+                mensagemAleatoria();
+                printf("\n");
+                EventosAleatorios(arvore.raiz);
+                break;
+            case 8:
+                TCidade cidades[10];
+                int numCidades = ColetaCidades(arvore.raiz, cidades, 0);
 
-                BuscarEventoNaCidadePorNome(cidadeEncontrada, nomeEvento);
-            }
-            else if (strcasecmp(resposta, "Avaliação") == 0 ||
-                     strcasecmp(resposta, "Avaliacao") == 0)
-            {
-                float nota;
-                printf("Qual é avaliação desejada? Digite separando o decimal com .\n");
-                scanf("%f", &nota);
+                if (numCidades == 0) {
+                    printf("Nenhuma cidade encontrada.\n");
+                    break;
+                }
+
+                for (int i = 0; i < numCidades; i++) {
+                    CalculaMediaCidade(&cidades[i]);
+                }
+
+                int indiceMenor = 0;
+                for (int i = 1; i < numCidades; i++) {
+                    if (cidades[i].notaMedia < cidades[indiceMenor].notaMedia) {
+                        indiceMenor = i;
+                    }
+                }
+
+                printf("%s - %.2f\n",cidades[indiceMenor].nome, cidades[indiceMenor].notaMedia);
+                mensagemAleatoria();
+                printf("\n");
+                EventosAleatorios(arvore.raiz);
+                break;
+            case 9:
+                TCidade cidades1[10];
+                int numCidades1 = ColetaCidades(arvore.raiz, cidades, 0);
+
+                if (numCidades == 0) {
+                    printf("Nenhuma cidade encontrada.\n");
+                    break;
+                }
+
+                // Calcular médias
+                for (int i = 0; i < numCidades; i++) {
+                    CalculaMediaCidade(&cidades[i]);
+                }
+
+                // Encontrar cidade com maior nota média
+                int indiceMaior = 0;
+                for (int i = 1; i < numCidades; i++) {
+                    if (cidades[i].notaMedia > cidades[indiceMaior].notaMedia) {
+                        indiceMaior = i;
+                    }
+                }
+
+                printf("%s - %.2f\n",cidades[indiceMaior].nome, cidades[indiceMaior].notaMedia);
+                mensagemAleatoria();
+                printf("\n");
+                EventosAleatorios(arvore.raiz);
+                break;
+            case 10:
+                criarRoteiro(arvore.raiz);
+                mensagemAleatoria();
+                printf("\n");
+                EventosAleatorios(arvore.raiz);
+                break;
+            case 11:
+                printf("1 - Ordenação por Bubble Sort\n");
+                printf("2 - Ordenação por Selection Sort\n");
+                printf("3 - Ordenação por Quick Sort\n");
+                printf("4 - Ordenação por Heap Sort\n");
+                printf("5 - Ordenação por Insertion Sort\n");
+                printf("6 - Ordenação por Shell Sort\n");
+                printf("7 - Ordenação por Merge Sort\n");
+                printf("Escolha uma opção: ");
+
+                int sort;git
+                scanf("%d", &sort);
+
+                TCidade cidades2[10];
+                int numCidades2 = ColetaCidades(arvore.raiz, cidades, 0);
+
+                for (int i; i < numCidades; i++){
+                    Minimo(&cidades[i]);
+                }
+
+                switch (sort){
+                    case 1:
+                        BubbleSortCidades(cidades, numCidades);
+                        break;
+                    case 2:
+                        SelectionSortCidades(cidades, numCidades);
+                        break;
+                    case 3:
+                        QuickSortCidades(cidades, numCidades);
+                        break;
+                    case 4:
+                        HeapSortCidades(cidades, numCidades);
+                        break;
+                    case 5:
+                        InsertionSortCidades(cidades, numCidades);
+                        break;
+                    case 6:
+                        ShellSortCidades(cidades, numCidades);
+                        break;
+                    case 7:
+                        MergeSortCidades(cidades, numCidades);
+
+                }
+
+                for (int i = 0; i < numCidades; i++) {
+                    printf("%s - Nota média: %.2f\n", cidades[i].nome, cidades[i].notaMedia);
+                }
+
+                mensagemAleatoria();
+                printf("\n");
+                EventosAleatorios(arvore.raiz);
+            case 12:
+                char nomeCidades[50];
+                printf("Digite o nome da cidade que deseja ordenar os eventos: ");
                 getchar();
-                BuscarEventoNaCidadePorAvaliacao(cidadeEncontrada, nota);
-            }
-            else
-            {
-                printf("Opção inválida.\n");
-            }
-        }
-            mensagemAleatoria();
-            printf("\n");
-            EventosAleatorios(arvore.raiz);
-            break;
-        case 5:
-            criarRoteiro(arvore.raiz);
-            mensagemAleatoria();
-            printf("\n");
-            EventosAleatorios(arvore.raiz);
-            break;
-        case 0:
-            printf("Saindo...\n");
-            break;
-        default:
-            printf("Opcao invalida!\n");
+                fgets(nomeCidades, 100, stdin);
+                size_t len2 = strlen(nomeCidades);
+                if (len > 0 && nomeCidades[len-1] == '\n'){
+                    nomeCidades [len - 1] = '\0';
+                }
+                TCidade *cidade = buscarCidade(arvore.raiz, nomeCidades);
+                if (cidades == NULL){
+                    printf("Cidade não encontrada\n");
+                    break;
+                }
+
+                printf("1 - Ordenação por Bubble Sort\n");
+                printf("2 - Ordenação por Selection Sort\n");
+                printf("3 - Ordenação por Quick Sort\n");
+                printf("4 - Ordenação por Heap Sort\n");
+                printf("5 - Ordenação por Insertion Sort\n");
+                printf("6 - Ordenação por Shell Sort\n");
+                printf("7 - Ordenação por Merge Sort\n");
+                printf("Escolha uma opção: ");
+                int sort2;
+                scanf("%d", &sort2);
+
+                switch (sort){
+                    case 1:
+                        BubbleSortEventos(cidades -> eventos, cidades -> numEventos);
+                        break;
+                    case 2:
+                        SelectionSortEventos(cidades -> eventos, cidades -> numEventos);
+                        break;
+                    case 3:
+                        QuickSortEventos(cidades -> eventos, cidades -> numEventos);
+                        break;
+                    case 4:
+                        HeapSortEventos(cidades -> eventos, cidades -> numEventos);
+                        break;
+                    case 5:
+                        InsertionSortEventos(cidades -> eventos, cidades -> numEventos);
+                        break;
+                    case 6:
+                        ShellSortEventos(cidades -> eventos, cidades -> numEventos);
+                        break;
+                    case 7:
+                        MergeSortEventos(cidades -> eventos, cidades -> numEventos);
+                        break;
+                }
+                for (int i = 0; i < cidade->numEventos; i++) {
+                    printf("%s - Avaliação: %.1f\n", cidade->eventos[i].nome, cidade->eventos[i].avaliacao);
+
+                }
+
+                mensagemAleatoria();
+                printf("\n");
+                EventosAleatorios(arvore.raiz);
+            case 0:
+                printf("Saindo...\n");
+                break;
+            default:
+                printf("Opcao invalida!\n");
         }
     } while (opcao != 0);
 
