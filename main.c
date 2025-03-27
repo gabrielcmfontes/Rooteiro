@@ -490,9 +490,9 @@ void BuscarEventoNaCidadePorAvaliacao(TCidade *cidade, float avaliacao) {
             }
         }
 
-        printf("Não encontramos evento com avaliação %.1f.\n", avaliacao);
-        printf("O evento com avaliação mais próxima é:\n");
-        printf("Cidade: %s\nNome do evento: %s\nAvaliação: %.1f\n",
+        printf("Não encontramos evento com avaliacao %.1f.\n", avaliacao);
+        printf("O evento com avaliacao mais próxima é:\n");
+        printf("Cidade: %s\nNome do evento: %s\nAvaliacao: %.1f\n",
                cidade->nome, cidade->eventos[indiceProximo].nome,
                cidade->eventos[indiceProximo].avaliacao);
     }
@@ -504,7 +504,7 @@ void MostrarTodosEventosDeTodasCidades(TCelula *raiz) {
     }
 
     for (int i = 0; i < raiz->item.cidade.numEventos; i++) {
-        printf("  %s - Avaliação: %.1f - Cidade: %s\n",
+        printf("  %s - Avaliacao: %.1f - Cidade: %s\n",
                raiz->item.cidade.eventos[i].nome,
                raiz->item.cidade.eventos[i].avaliacao,
                raiz->item.cidade.nome);
@@ -584,7 +584,7 @@ void criarRoteiro(TCelula *raiz) {
             printf("%d. %s: Não há eventos disponíveis\n", i + 1, cidade->nome);
         }
         else {
-            printf("%d. %s: %s (Avaliação: %.1f)",
+            printf("%d. %s: %s (Avaliacao: %.1f)",
                    i + 1,
                    cidade->nome,
                    melhorEvento,
@@ -838,11 +838,17 @@ void MergeSortEventos(TEvento *eventos, int n, int ordem) {
 
 // Funções de troca genéricas
 void trocar(void *a, void *b, size_t size) {
-    char temp[size];
+    void *temp = malloc(size);
+    if (temp == NULL) {
+        fprintf(stderr, "Erro de alocação de memória\n");
+        exit(EXIT_FAILURE);
+    }
     memcpy(temp, a, size);
     memcpy(a, b, size);
     memcpy(b, temp, size);
+    free(temp);
 }
+
 
 // Selection Sort genérico
 void SelectionSort(void *x, int n, int tipo, int ordem) {
@@ -1010,50 +1016,40 @@ void BubbleSort(void *x, int n, int tipo, int ordem) {
 }
 
 void heapify(void *x, int n, int i, int tipo, int ordem) {
-    if (tipo == 0) {
+    int largest = i;
+    int l = 2 * i + 1;
+    int r = 2 * i + 2;
+
+    if (tipo == 0) {  // Cidades
         TCidade *cidades = (TCidade*)x;
-        int largest = i;
-        int left = 2 * i + 1;
-        int right = 2 * i + 2;
 
-        int compareLeft = (ordem == 0) ?
-            (left < n && cidades[left].notaMedia > cidades[largest].notaMedia) :
-            (left < n && cidades[left].notaMedia < cidades[largest].notaMedia);
+        if (l < n && ((ordem == 0 && cidades[l].notaMedia > cidades[largest].notaMedia) ||
+                      (ordem == 1 && cidades[l].notaMedia < cidades[largest].notaMedia))) {
+            largest = l;
+                      }
 
-        int compareRight = (ordem == 0) ?
-            (right < n && cidades[right].notaMedia > cidades[largest].notaMedia) :
-            (right < n && cidades[right].notaMedia < cidades[largest].notaMedia);
-
-        if (compareLeft)
-            largest = left;
-
-        if (compareRight)
-            largest = right;
+        if (r < n && ((ordem == 0 && cidades[r].notaMedia > cidades[largest].notaMedia) ||
+                      (ordem == 1 && cidades[r].notaMedia < cidades[largest].notaMedia))) {
+            largest = r;
+                      }
 
         if (largest != i) {
             trocar(&cidades[i], &cidades[largest], sizeof(TCidade));
             heapify(x, n, largest, tipo, ordem);
         }
-    }
-    else if (tipo == 1) {
+
+    } else if (tipo == 1) {  // Eventos
         TEvento *eventos = (TEvento*)x;
-        int largest = i;
-        int left = 2 * i + 1;
-        int right = 2 * i + 2;
 
-        int compareLeft = (ordem == 0) ?
-            (left < n && eventos[left].avaliacao > eventos[largest].avaliacao) :
-            (left < n && eventos[left].avaliacao < eventos[largest].avaliacao);
+        if (l < n && ((ordem == 0 && eventos[l].avaliacao > eventos[largest].avaliacao) ||
+                      (ordem == 1 && eventos[l].avaliacao < eventos[largest].avaliacao))) {
+            largest = l;
+                      }
 
-        int compareRight = (ordem == 0) ?
-            (right < n && eventos[right].avaliacao > eventos[largest].avaliacao) :
-            (right < n && eventos[right].avaliacao < eventos[largest].avaliacao);
-
-        if (compareLeft)
-            largest = left;
-
-        if (compareRight)
-            largest = right;
+        if (r < n && ((ordem == 0 && eventos[r].avaliacao > eventos[largest].avaliacao) ||
+                      (ordem == 1 && eventos[r].avaliacao < eventos[largest].avaliacao))) {
+            largest = r;
+                      }
 
         if (largest != i) {
             trocar(&eventos[i], &eventos[largest], sizeof(TEvento));
@@ -1062,21 +1058,25 @@ void heapify(void *x, int n, int i, int tipo, int ordem) {
     }
 }
 
+
 void HeapSort(void *x, int n, int tipo, int ordem) {
-    // Construir heap (reorganizar array)
+    // Construção do heap
     for (int i = n / 2 - 1; i >= 0; i--)
         heapify(x, n, i, tipo, ordem);
 
-    // Extrair elementos do heap um por um
+    // Extração de elementos um por um
     for (int i = n - 1; i > 0; i--) {
         if (tipo == 0) { // Cidades
             trocar(&((TCidade*)x)[0], &((TCidade*)x)[i], sizeof(TCidade));
         } else { // Eventos
             trocar(&((TEvento*)x)[0], &((TEvento*)x)[i], sizeof(TEvento));
         }
+
+        // Chama heapify na parte reduzida do heap
         heapify(x, i, 0, tipo, ordem);
     }
 }
+
 
 int particionar(void *x, int low, int high, int tipo, int ordem) {
     if (tipo == 0) {
@@ -1211,8 +1211,8 @@ int main()
         printf("5 - Buscar cidade por evento\n");
         printf("6 - Buscar evento na cidade\n");
         printf("7 - Buscar cidades com determinado evento\n");
-        printf("8 - Cidade com a menor nota média\n");
-        printf("9 - Cidade com a maior nota média\n");
+        printf("8 - Cidade com a menor nota media\n");
+        printf("9 - Cidade com a maior nota media\n");
         printf("10 - Criar roteiro\n");
         printf("11 - Ordenar cidades\n");
         printf("12 - Ordenar eventos\n");
@@ -1283,7 +1283,7 @@ int main()
 
                 printf("Deseja procurar o evento por:\n");
                 printf("1 - Nome do Evento\n");
-                printf("2 - Avaliação\n");
+                printf("2 - Avaliacao\n");
                 printf("Escolha (1/2):\n");
                 scanf("%d", &tipoSelecao);
                 getchar(); // Clear input buffer
@@ -1449,7 +1449,7 @@ int main()
                 }
 
                 for (int i = 0; i < numCidades2; i++) {
-                    printf("%s - Nota média: %.2f\n", cidades2[i].nome, cidades2[i].notaMedia);
+                    printf("%s - Nota media: %.2f\n", cidades2[i].nome, cidades2[i].notaMedia);
                 }
 
                 mensagemAleatoria();
